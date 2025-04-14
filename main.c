@@ -1,5 +1,6 @@
 #include "sdl_utils.h"
 #include "game_object.h"
+#include "game_ui.h"
 
 
 
@@ -15,9 +16,10 @@ int main(void) {
         return 1;
     }
 
-    ship main_ship;
+    ship main_ship;     main_ship.ship_hp = 10;
     projectile proj[PROJECTILE_MAX] = {0};
-    enemy enemies[ENEMY_MAX] = {0};
+    enemy enemies[ENEMY_MAX] = {0};     int enemy_hp = 3;
+    main_ship.damage = 1;
 
 
     SDL_QueryTexture(tex, NULL, NULL, &main_ship.rect.w, &main_ship.rect.h);
@@ -42,7 +44,7 @@ int main(void) {
             last_projectile_time = current_time; 
         }
         if (current_time > last_enemy_spawn_time + 2000) { 
-            spawn_enemy(enemies);
+            spawn_enemy(enemies, enemy_hp);
             last_enemy_spawn_time = current_time;
         }
         
@@ -52,14 +54,19 @@ int main(void) {
         update_projectiles(proj);
         update_enemies(enemies);
         check_projectile_enemy_collision( proj, enemies);
+        check_enemy_ship_collision(&main_ship, enemies);
+        if (main_ship.ship_hp <= 0) {
+            close_requested = 1; 
+        }
 
         SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);  
         SDL_RenderClear(rend);
 
-        
-        render_enemies(rend, enemies);
-        render(rend,&main_ship, 0);
         render_projectiles(rend, proj);
+        render_enemies(rend, enemies);
+        render(rend,&main_ship);
+        render_hp_bar(rend, &main_ship);
+        
 
         SDL_RenderPresent(rend);
 

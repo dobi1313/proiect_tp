@@ -102,38 +102,18 @@ void handle_input(int *up, int *down, int *left, int *right, int *close_requeste
             }
     }    
 }
-/*
-void update_position(float *x_pos, float *y_pos, int *x_vel, int *y_vel, int up, int down, int left, int right, SDL_Rect *dest) {
-    if(up && !down) *y_vel = -SPEED / 60.0;
-    if(down && !up) *y_vel = SPEED / 60.0;
-    //if(!up && !down) *y_vel = 0;
-    //if(up && down) *y_vel = 0;
 
-    if(left && !right) *x_vel = -SPEED / 60.0;
-    if(right && !left) *x_vel = SPEED / 60.0;
-    //if(!left && !right) *x_vel = 0;
-    //if(left && right) *x_vel = 0;
 
-    *x_pos += *x_vel;
-    *y_pos += *y_vel;
-
-    if (*x_pos < 0) *x_pos = 0;
-    if (*x_pos > WINDOW_WIDTH - dest->w) *x_pos = WINDOW_WIDTH - dest->w;
-    if (*y_pos < 0) *y_pos = 0;
-    if (*y_pos > WINDOW_HEIGHT - dest->h) *y_pos = WINDOW_HEIGHT - dest->h;
-
-    dest->x = (int)*x_pos;
-    dest->y = (int)*y_pos;
-}
-*/
-
-void render(SDL_Renderer *rend, ship *main_ship, int is_hit) {
-    if (is_hit) 
-        SDL_SetRenderDrawColor(rend, 255, 0, 0, 255); // Red if hit
+void render(SDL_Renderer *rend, ship *main_ship) {
+    if (main_ship->is_hit) 
+        SDL_SetRenderDrawColor(rend, 255, 0, 0, 255); 
     else 
-        SDL_SetRenderDrawColor(rend, 0, 255, 0, 255); // Green normally
+        SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
 
     SDL_RenderFillRect(rend, &main_ship->rect);
+    if(main_ship->is_hit) {
+        main_ship->is_hit = 0;
+    }
 }
 void cleanup(SDL_Texture *tex, SDL_Renderer *rend, SDL_Window *window) {
     SDL_DestroyTexture(tex);

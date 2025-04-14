@@ -17,6 +17,9 @@ typedef struct {
     float y_pos;
     int x_vel;
     int y_vel;
+    int damage;
+    int ship_hp;
+    int is_hit;
 } ship;
 
 typedef struct {
@@ -26,6 +29,7 @@ typedef struct {
     int x_vel;
     int y_vel;
     int is_active;
+    int damage;
 } projectile;
 
 typedef struct {
@@ -34,16 +38,19 @@ typedef struct {
     float y_pos;
     int y_vel;
     int is_active;
+    int hp;
+    int is_hit;
 } enemy;
 
 void fire_projectile(projectile *projectiles, ship *main_ship);
 void render_projectiles(SDL_Renderer *rend, projectile *projectiles);
 void update_projectiles(projectile *projectiles);
 void update_position( int up, int down, int left, int right,  ship *main_ship);
-void spawn_enemy(enemy *enemies);
+void spawn_enemy(enemy *enemies, int enemy_hp);
 void update_enemies(enemy *enemies);
 void render_enemies(SDL_Renderer *rend, enemy *enemies);
 void check_projectile_enemy_collision(projectile *projectiles, enemy *enemies) ;
+void check_enemy_ship_collision(ship *main_ship, enemy *enemies);
 
 
 #endif

@@ -12,7 +12,7 @@
 int initialize(SDL_Window **window, SDL_Renderer **rend);
 SDL_Texture* load_texture(SDL_Renderer *rend, const char *file);
 void handle_input(int *up, int *down, int *left, int *right, int *close_requested);
-void render(SDL_Renderer *rend, ship *main_ship, int is_hit);
+void render(SDL_Renderer *rend, ship *main_ship);
 void cleanup(SDL_Texture *tex, SDL_Renderer *rend, SDL_Window *window);
 
 #endif
