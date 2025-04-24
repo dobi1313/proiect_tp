@@ -2,6 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 
+// projectile functions
 void fire_projectile(projectile *projectiles, ship *main_ship) {
     for (int i = 0; i < PROJECTILE_MAX; i++) {
         if (!projectiles[i].is_active) {
@@ -43,6 +44,7 @@ void render_projectiles(SDL_Renderer *rend, projectile *projectiles) {
     }
 }
 
+// ship functions
 void update_position( int up, int down, int left, int right, ship *main_ship) {
     if(up && !down) main_ship->y_vel = -SPEED / 60.0;
     if(down && !up) main_ship->y_vel = SPEED / 60.0;
@@ -62,6 +64,7 @@ void update_position( int up, int down, int left, int right, ship *main_ship) {
     main_ship->rect.y = (int)main_ship->y_pos;
 }
 
+// enemy functions
 void spawn_enemy(enemy *enemies, int enemy_hp) {
     for (int i = 0; i < ENEMY_MAX; i++) {
         if (!enemies[i].is_active) {  
@@ -72,6 +75,7 @@ void spawn_enemy(enemy *enemies, int enemy_hp) {
             enemies[i].y_vel = 100; 
             enemies[i].is_active = 1;
             enemies[i].hp = enemy_hp;
+            enemies[i].score = enemy_hp;
             break;
         }
     }
@@ -110,7 +114,8 @@ void render_enemies(SDL_Renderer *rend, enemy *enemies) {
     SDL_SetRenderDrawColor(rend, r, g, b, a); 
 }
 
-void check_projectile_enemy_collision(projectile *projectiles, enemy *enemies) {
+// check collision functions
+void check_projectile_enemy_collision(projectile *projectiles, enemy *enemies, unsigned int *score,unsigned int *exp) {
     for (int i = 0; i < PROJECTILE_MAX; i++) {
         if (!projectiles[i].is_active) continue; 
 
@@ -124,7 +129,9 @@ void check_projectile_enemy_collision(projectile *projectiles, enemy *enemies) {
                     enemies[j].hp -= projectiles[i].damage; 
                 }
                 if (enemies[j].hp <= 0) {
-                    enemies[j].is_active = 0; 
+                    enemies[j].is_active = 0;
+                    *score += enemies[j].score;
+                    *exp += enemies[j].score;
                 }
                 break; 
             }
@@ -135,7 +142,7 @@ void check_projectile_enemy_collision(projectile *projectiles, enemy *enemies) {
 void check_enemy_ship_collision(ship *main_ship, enemy *enemies) {
     for (int i = 0; i < ENEMY_MAX; i++) {
         if (enemies[i].is_active && SDL_HasIntersection(&main_ship->rect, &enemies[i].rect)) {
-            main_ship->ship_hp -= enemies[i].hp;
+            main_ship->ship_hp -= (enemies[i].hp - main_ship->armor);
             main_ship->is_hit = 1;
             if (main_ship->ship_hp <= 0) {
                 main_ship->ship_hp = 0; 
@@ -144,3 +151,86 @@ void check_enemy_ship_collision(ship *main_ship, enemy *enemies) {
         }
     }
 }
+
+void check_projectile_boss_collision(projectile *projectiles, boss *boss_enemy, unsigned int *score, unsigned int *exp) {
+    if (!boss_enemy->is_active) return;
+
+    for (int i = 0; i < PROJECTILE_MAX; i++) {
+        if (!projectiles[i].is_active) continue; 
+
+        if (SDL_HasIntersection(&projectiles[i].rect, &boss_enemy->rect)) {
+            projectiles[i].is_active = 0; 
+            boss_enemy->hp -= projectiles[i].damage; 
+            if (boss_enemy->hp <= 0) {
+                boss_enemy->is_active = 0;
+                *score += 100;
+                *exp += 100; 
+            }
+            break; 
+        }
+    }
+}
+
+
+// Lvl up functions
+unsigned int calculate_exp_for_next_level(unsigned int level) {
+    const unsigned int BASE_EXP = 100; 
+    const float EXPONENT = 1.3;        
+    return (unsigned int)(BASE_EXP * pow(level, EXPONENT));
+}
+
+int if_lvl_up(ship *main_ship, unsigned int *exp) {
+    if (*exp == calculate_exp_for_next_level(main_ship->level+1) && exp != 0) {
+        *exp = 0;
+        return 1; 
+    }
+    return 0; 
+}
+void main_ship_lvl_up(ship *main_ship) {
+    main_ship->level++;
+    main_ship->max_hp += 5;
+    main_ship->ship_hp = main_ship->max_hp;
+    if(main_ship->level % 3 == 0) {
+        main_ship->damage += 1;
+    }
+    if(main_ship->level % 5 == 0) {
+        main_ship->atk_speed -= 50; 
+    }
+    if(main_ship->level % 7 == 0) {
+        main_ship->armor += 1;
+    }
+}
+
+// boss functions
+
+
+void update_boss(boss *boss_enemy) {
+    if (!boss_enemy->is_active) return;
+
+    
+    boss_enemy->x_pos += boss_enemy->x_vel;
+    if (boss_enemy->x_pos <= 0 || boss_enemy->x_pos + boss_enemy->rect.w >= WINDOW_WIDTH) {
+        boss_enemy->x_vel = -boss_enemy->x_vel; 
+    }
+
+    boss_enemy->rect.x = (int)boss_enemy->x_pos;
+    boss_enemy->rect.y = (int)boss_enemy->y_pos;
+}
+
+void render_boss(SDL_Renderer *rend, boss *boss_enemy) {
+    if (boss_enemy->is_active) {
+        SDL_SetRenderDrawColor(rend, 255, 0, 255, 255); 
+        SDL_RenderFillRect(rend, &boss_enemy->rect);
+    }
+}
+void check_boss_ship_collision(ship *main_ship, boss *boss_enemy) {
+    if (boss_enemy->is_active && SDL_HasIntersection(&main_ship->rect, &boss_enemy->rect)) {
+        main_ship->ship_hp -= (boss_enemy->hp - main_ship->armor);
+        main_ship->is_hit = 1;
+        if (main_ship->ship_hp <= 0) {
+            main_ship->ship_hp = 0; 
+        } 
+    }
+}
+
+

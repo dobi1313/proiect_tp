@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -g -Wall -O3 -pedantic `sdl2-config --cflags`
-LDFLAGS = `sdl2-config --libs` -lSDL2_image
+CFLAGS = -g -Wall -O3 -pedantic `sdl2-config --cflags` 
+LDFLAGS = `sdl2-config --libs` -lSDL2_image -lSDL2_ttf -lm
 TARGET = game
 
 OBJ = main.o sdl_utils.o game_object.o game_ui.o

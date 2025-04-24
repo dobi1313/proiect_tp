@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "game_ui.h": "c",
+        "sdl_utils.h": "c"
     }
 }

@@ -1,4 +1,4 @@
-// sdl_utils.c
+
 #include "sdl_utils.h"
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
@@ -104,7 +104,7 @@ void handle_input(int *up, int *down, int *left, int *right, int *close_requeste
 }
 
 
-void render(SDL_Renderer *rend, ship *main_ship) {
+void render_ship(SDL_Renderer *rend, ship *main_ship) {
     if (main_ship->is_hit) 
         SDL_SetRenderDrawColor(rend, 255, 0, 0, 255); 
     else 
@@ -115,10 +115,17 @@ void render(SDL_Renderer *rend, ship *main_ship) {
         main_ship->is_hit = 0;
     }
 }
-void cleanup(SDL_Texture *tex, SDL_Renderer *rend, SDL_Window *window) {
-    SDL_DestroyTexture(tex);
-    SDL_DestroyRenderer(rend);
-    SDL_DestroyWindow(window);
+void cleanup(TTF_Font *font, SDL_Renderer *rend, SDL_Window *window) {
+    if (font) {
+        TTF_CloseFont(font);
+    }
+    TTF_Quit(); 
+    if (rend) {
+        SDL_DestroyRenderer(rend);
+    }
+    if (window) {
+        SDL_DestroyWindow(window);
+    }
     SDL_Quit();
 }
 
