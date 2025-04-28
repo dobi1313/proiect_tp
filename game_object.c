@@ -152,7 +152,7 @@ void check_enemy_ship_collision(ship *main_ship, enemy *enemies) {
     }
 }
 
-void check_projectile_boss_collision(projectile *projectiles, boss *boss_enemy, unsigned int *score, unsigned int *exp) {
+void check_boss_projectile_collision(projectile *projectiles, boss *boss_enemy, unsigned int *score, unsigned int *exp) {
     if (!boss_enemy->is_active) return;
 
     for (int i = 0; i < PROJECTILE_MAX; i++) {

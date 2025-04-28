@@ -1,25 +1,24 @@
 CC = gcc
 CFLAGS = -g -Wall -O3 -pedantic `sdl2-config --cflags` 
 LDFLAGS = `sdl2-config --libs` -lSDL2_image -lSDL2_ttf -lm
-TARGET = game
-
+TARGET = game.exe
 OBJ = main.o sdl_utils.o game_object.o game_ui.o
 
-all: $(TARGET)
+DLL_DIR = external_dlls
+
+COPY_DLLS = cp $(DLL_DIR)/*.dll .
+
+all: $(TARGET) copy-dlls
 
 $(TARGET): $(OBJ)
 	$(CC) -o $(TARGET) $(OBJ) $(LDFLAGS)
 
-main.o: main.c sdl_utils.h
-	$(CC) $(CFLAGS) -c main.c
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-sdl_utils.o: sdl_utils.c sdl_utils.h
-	$(CC) $(CFLAGS) -c sdl_utils.c
 
-game_object.o: game_object.c game_object.h
-	$(CC) $(CFLAGS) -c game_object.c
+copy-dlls:
+	cp $(DLL_DIR)/*.dll .
 
-game_ui.o: game_ui.c game_ui.h
-	$(CC) $(CFLAGS) -c game_ui.c
 clean:
-	rm -f $(TARGET) $(OBJ)
+	rm -f $(TARGET) $(OBJ)    

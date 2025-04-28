@@ -7,9 +7,6 @@ void render_hp_bar(SDL_Renderer *rend, ship *main_ship) {
     SDL_RenderFillRect(rend, &hp_bar);
 
     float hp_ratio = (float)main_ship->ship_hp / main_ship->max_hp; 
-    printf("HP Ratio: %f\n", hp_ratio);
-    printf("Ship HP: %d\n", main_ship->max_hp);
-    printf("Ship Current HP: %d\n", main_ship->ship_hp);
     SDL_Rect hp_fill = {HP_BAR_X, HP_BAR_Y, (int)(HP_BAR_WIDTH * hp_ratio), HP_BAR_HEIGHT};
     SDL_SetRenderDrawColor(rend, 0, 255, 0, 255); 
     SDL_RenderFillRect(rend, &hp_fill);

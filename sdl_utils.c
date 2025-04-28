@@ -105,6 +105,7 @@ void handle_input(int *up, int *down, int *left, int *right, int *close_requeste
 
 
 void render_ship(SDL_Renderer *rend, ship *main_ship) {
+    //printf("ship_hp: %d\n", main_ship->max_hp);
     if (main_ship->is_hit) 
         SDL_SetRenderDrawColor(rend, 255, 0, 0, 255); 
     else 
