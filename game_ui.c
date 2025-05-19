@@ -22,7 +22,7 @@ void render_game_over(SDL_Renderer *rend) {
         return;
     }
 
-    TTF_Font *font = TTF_OpenFont("/home/dobi/proiect_tp/game_resources/HomeVideoBold-R90Dv.ttf", 38); 
+    TTF_Font *font = TTF_OpenFont("game_resources/HomeVideoBold-R90Dv.ttf", 38); 
     if (!font) {
         printf("Failed to load font: %s\n", TTF_GetError());
         TTF_Quit();
@@ -61,7 +61,7 @@ void render_score(SDL_Renderer *rend, int score) {
         return;
     }
 
-    TTF_Font *font = TTF_OpenFont("/home/dobi/proiect_tp/game_resources/HomeVideoBold-R90Dv.ttf", 24); 
+    TTF_Font *font = TTF_OpenFont("game_resources/HomeVideoBold-R90Dv.ttf", 24); 
     if (!font) {
         printf("Failed to load font: %s\n", TTF_GetError());
         TTF_Quit();
@@ -118,7 +118,7 @@ void render_level_up_bar(SDL_Renderer *rend, unsigned int current_exp, unsigned 
     SDL_RenderFillRect(rend, &bar_fill);
 
     // Render the player's level as text
-    TTF_Font *font = TTF_OpenFont("/home/dobi/proiect_tp/game_resources/HomeVideoBold-R90Dv.ttf", 24); 
+    TTF_Font *font = TTF_OpenFont("game_resources/HomeVideoBold-R90Dv.ttf", 24); 
     if (!font) {
         printf("Failed to load font: %s\n", TTF_GetError());
         return;
