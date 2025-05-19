@@ -17,29 +17,23 @@
 #	rm -f $(TARGET) $(OBJ)
 
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -g
-
-# Your source files
-SRCS = main.c sdl_utils.c game_object.c game_ui.c
-OBJS = $(SRCS:.c=.o)
-
-# Linker flags:
-# -Llibs tells linker where to find .so files at link time
-# -lSDL2 etc to link SDL2 libraries
-# -Wl,-rpath,'$$ORIGIN/libs' tells loader to look for libs in libs/ at runtime
+CFLAGS = -Wall -Wextra -O2
 LDFLAGS = -Llibs -Wl,-rpath,'$$ORIGIN/libs' -lSDL2 -lSDL2_image -lSDL2_ttf -lm -lpthread -ldl -lrt -lX11
 
-TARGET = space_shooter
+SRC = $(wildcard *.c)
+OBJ = $(SRC:.c=.o)
+BIN = bin/space_shooter
 
-.PHONY: all clean
+all: $(BIN)
 
-all: $(TARGET)
-
-$(TARGET): $(OBJS)
+$(BIN): $(OBJ)
+	@mkdir -p bin
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f *.o
+	rm -rf bin
+
