@@ -19,14 +19,17 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -g
 
-# List your local static libraries explicitly
-LDFLAGS = -static \
-    ./libSDL2.a \
-    ./libSDL2_image.a \
-    ./libSDL2_ttf.a \
-    -lm -lpthread -ldl -lrt -lX11
+# Path to your local shared libraries
+LIBDIR = libs
 
-TARGET = space_shooter.exe
+# Linker flags:
+# -L to find libs at link time
+# -l to link specific libs
+# -Wl,-rpath sets runtime search path to libs/
+LDFLAGS = -L$(LIBDIR) -Wl,-rpath=$(LIBDIR) \
+          -lSDL2 -lSDL2_image -lSDL2_ttf -lm -lpthread -ldl -lrt -lX11
+
+TARGET = space_shooter
 SRCS = main.c sdl_utils.c game_object.c game_ui.c
 OBJS = $(SRCS:.c=.o)
 
