@@ -1,0 +1,35 @@
+functii / parti majore ale jocului:
+	-Nava principala:
+		-Miscare
+		-Proporti
+		-Proiectile
+		-Control
+		-Health Bar
+	-Inamici:
+		-Proporti
+		-Conditii/mod de aparitie
+		-Health points
+		-Deplasare
+		-Clase
+		-Crestere in timp a hp si dmg
+		-Boss:
+			-Proiectile
+			-Conditi pentru a trage:
+				-in functie de timp
+				-in functie de poz fata de jucator
+			-Healt bar
+			-Minioni(optionali)
+			-oprire spawn minioni
+	-Coliziune:
+		-inamici cu proiectile
+		-jucatori cu inamici/ proiectile inamice
+		-marginile ecranului(0 DMG)
+	-Power-UPS:
+		-generare aleatorie(o sa am nevoie un pic de cursul de probabilitati -> fac mai la final)
+		- bad RNG detector(un nr de inamici la care se genereaza cel putin o putere, poate depinde si tipul de inamic adica clasa)
+		-formule pt DMG jucatorului(nu ceva complicat)
+		-generare in imagine(ex. : proiectile mai mari, mai rapide, sau mai multe, sau culori diferite datorate unor efecte speciale)
+		-folder de idei separat pt asta ca pot exista multe si sa nu fie pierdute
+		-raritate in functie de unicitate sau cat de bune sunt
+		 
+		
