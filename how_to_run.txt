@@ -1,0 +1,4 @@
+sudo cp libs/libSDL2-2.0.so.0 /usr/local/lib/
+sudo cp libs/libSDL2_ttf-2.0.so.0 /usr/local/lib/
+sudo cp libs/libSDL2_image-2.0.so.0 /usr/local/lib/
+sudo ldconfig
