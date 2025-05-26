@@ -438,7 +438,7 @@ void main_ship_lvl_up(ship *main_ship) {
     }
 }
 
-// boss functions
+// boss functions(not well implemented yet)
 
 
 void update_boss(boss *boss_enemy) {
@@ -461,6 +461,8 @@ void render_boss(SDL_Renderer *rend, boss *boss_enemy) {
     }
 }
 
+
+// powerup functions
 void power_up_effect(ship *main_ship, powerup *p) {
     switch (p->type) {
         case Shield:
@@ -537,7 +539,6 @@ void power_end_effect(ship *main_ship, powerup *p) {
             p->is_up = 0;
             break;
         case SlowTime:
-            // Implement slow time effect end
             main_ship->slow_time = 1;
             p->is_up = 0;
             break;

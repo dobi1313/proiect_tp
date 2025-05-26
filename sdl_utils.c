@@ -45,7 +45,7 @@ SDL_Texture* load_texture(SDL_Renderer *rend, const char *file) {
 }
 
 
-void handle_input(int *up, int *down, int *left, int *right, int *close_requested) {
+void handle_input(int *up, int *down, int *left, int *right, int *close_requested, int *paused) {
     SDL_Event event;
     
         while (SDL_PollEvent(&event)) {
@@ -71,6 +71,9 @@ void handle_input(int *up, int *down, int *left, int *right, int *close_requeste
                         case SDL_SCANCODE_RIGHT:
                         case SDL_SCANCODE_D:
                             *right = 1;
+                            break;
+                        case SDL_SCANCODE_ESCAPE:
+                            *paused = !(*paused);
                             break;
                         default:
                             break;

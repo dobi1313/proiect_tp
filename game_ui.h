@@ -22,8 +22,17 @@ void render_level_up_bar(SDL_Renderer *rend, unsigned int current_exp, unsigned 
 void spawn_power_up(powerup *powerups, int power_up_type);
 void render_power_up_block(SDL_Renderer *rend, powerup *p);
 void render_power_up_bar(SDL_Renderer *rend, int power_up_type);
-void check_power_up_collision(ship *main_ship, powerup *powerups, Uint32 current_time);
+void check_power_up_collision(ship *main_ship, powerup *powerups);
 void update_power_up(powerup *powerups);
 void render_shield(SDL_Renderer *rend, ship *main_ship);
+
+//pause menu
+int is_point_in_rect(int x, int y, SDL_Rect *rect);
+
+int handle_pause_menu_mouse_click(int mouse_x, int mouse_y);
+void render_pause_menu(SDL_Renderer *rend);
+int handle_start_menu_mouse_click(int mouse_x, int mouse_y);
+void render_start_menu(SDL_Renderer *rend);
+
 
 #endif

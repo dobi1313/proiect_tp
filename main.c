@@ -12,6 +12,8 @@ int main(void) {
 
     if (initialize(&window, &rend) != 0) return 1;
 
+    TTF_Init();
+
     ship main_ship;
     main_ship.ship_hp = 50;
     main_ship.max_hp = main_ship.ship_hp;
@@ -37,7 +39,7 @@ int main(void) {
 
     powerup powerups[POWERUP_MAX] = {0};
 
-    int up = 0, down = 0, left = 0, right = 0, close_requested = 0;
+    int up = 0, down = 0, left = 0, right = 0, close_requested = 0, paused = 0;
 
     Uint32 last_projectile_time = 0;
     Uint32 last_enemy_spawn_time = 0;
@@ -46,9 +48,66 @@ int main(void) {
     Uint32 experience = 0;
     Uint32 proj_type;
 
-    while (!close_requested) {
-        handle_input(&up, &down, &left, &right, &close_requested);
 
+    int show_start_menu = 1;
+    while (show_start_menu) {
+        render_start_menu(rend);
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                cleanup(NULL, rend, window);
+                return 0;
+            }
+            if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+                int result = handle_start_menu_mouse_click(event.button.x, event.button.y);
+                if (result == 1) { // Start
+                    show_start_menu = 0;
+                } else if (result == 2) { // Quit
+                    cleanup(NULL, rend, window);
+                    return 0;
+                }
+            }
+            if (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+                cleanup(NULL, rend, window);
+                return 0;
+            }
+        }
+        SDL_Delay(16);
+    }
+
+
+    while (!close_requested) {
+        handle_input(&up, &down, &left, &right, &close_requested, &paused);
+        if(paused) {
+            int waiting = 1;
+            while (waiting) {
+                render_pause_menu(rend);
+                SDL_Event event;
+                while (SDL_PollEvent(&event)) {
+                    if (event.type == SDL_QUIT) {
+                        close_requested = 1;
+                        waiting = 0;
+                    }
+                    if (event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+                        paused = 0;
+                        waiting = 0;
+                    }
+                    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+                        int result = handle_pause_menu_mouse_click(event.button.x, event.button.y);
+                        if (result == 1) { // Resume
+                            paused = 0;
+                            waiting = 0;
+                        } else if (result == 2) { // Quit
+                            close_requested = 1;
+                            waiting = 0;
+                        }
+                    }
+                }
+                SDL_Delay(16); // ~60 FPS
+            }
+            continue;
+        }
+        else{
         main_ship.x_vel = 0;
         main_ship.y_vel = 0;
         update_position(up, down, left, right, &main_ship);
@@ -100,7 +159,7 @@ int main(void) {
         update_power_up(powerups);
         check_projectile_enemy_collision(proj, enemies, &score, &experience, powerups, &main_ship);
         check_enemy_ship_collision(&main_ship, enemies);
-        check_power_up_collision(&main_ship, powerups, current_time);
+        check_power_up_collision(&main_ship, powerups );
         
         // Check if the player is dead
         if (main_ship.ship_hp <= 0) {
@@ -143,6 +202,7 @@ int main(void) {
         SDL_RenderPresent(rend);
 
         SDL_Delay(1000 / 60); // Cap the frame rate to ~60 FPS
+        }
     }
 
     cleanup(NULL, rend, window); 

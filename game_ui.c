@@ -205,7 +205,7 @@ void update_power_up(powerup *powerups) {
         }
     }
 }
-void check_power_up_collision(ship *main_ship, powerup *powerups, Uint32 current_time) {
+void check_power_up_collision(ship *main_ship, powerup *powerups) {
     for (int i = 0; i < POWERUP_TYPE_COUNT; i++) {
         if (powerups[i].is_active && SDL_HasIntersection(&main_ship->rect, &powerups[i].rect)) {
             
@@ -233,3 +233,191 @@ void render_shield(SDL_Renderer *rend, ship *main_ship) {
     SDL_SetRenderDrawColor(rend, 255, 255, 0, 100); // Semi-transparent yellow
     SDL_RenderFillRect(rend, &shield_rect);
 }
+
+// Pause menu rendering
+int is_point_in_rect(int x, int y, SDL_Rect *rect) {
+    return (x >= rect->x && x <= rect->x + rect->w &&
+            y >= rect->y && y <= rect->y + rect->h);
+}
+void render_pause_menu(SDL_Renderer *rend) {
+    SDL_SetRenderDrawColor(rend, 0, 0, 0, 200); // Semi-transparent overlay
+    SDL_RenderFillRect(rend, NULL);
+
+    // Render "PAUSED" text
+    TTF_Font *font = TTF_OpenFont("game_resources/HomeVideoBold-R90Dv.ttf", 48);
+    if (font) {
+        SDL_Color color = {255, 255, 255, 255};
+        SDL_Surface *surface = TTF_RenderText_Solid(font, "PAUSED", color);
+        if (surface) {
+            SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surface);
+            SDL_Rect dst = {WINDOW_WIDTH/2 - surface->w/2, WINDOW_HEIGHT/2 - 120, surface->w, surface->h};
+            SDL_RenderCopy(rend, texture, NULL, &dst);
+            SDL_DestroyTexture(texture);
+            SDL_FreeSurface(surface);
+        }
+        TTF_CloseFont(font);
+    }
+
+    // Resume button
+    SDL_Rect resume_btn = {WINDOW_WIDTH/2 - 100, WINDOW_HEIGHT/2 - 20, 200, 60};
+    SDL_SetRenderDrawColor(rend, 255, 255, 0, 255);
+    SDL_RenderFillRect(rend, &resume_btn);
+
+    font = TTF_OpenFont("game_resources/HomeVideoBold-R90Dv.ttf", 32);
+    if (font) {
+        SDL_Color color = {0, 0, 0, 255};
+        SDL_Surface *surface = TTF_RenderText_Solid(font, "Resume", color);
+        if (surface) {
+            SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surface);
+            SDL_Rect dst = {resume_btn.x + (resume_btn.w - surface->w)/2, resume_btn.y + (resume_btn.h - surface->h)/2, surface->w, surface->h};
+            SDL_RenderCopy(rend, texture, NULL, &dst);
+            SDL_DestroyTexture(texture);
+            SDL_FreeSurface(surface);
+        }
+        TTF_CloseFont(font);
+    }
+
+    // Quit button
+    SDL_Rect quit_btn = {WINDOW_WIDTH/2 - 100, WINDOW_HEIGHT/2 + 60, 200, 60};
+    SDL_SetRenderDrawColor(rend, 200, 0, 0, 255);
+    SDL_RenderFillRect(rend, &quit_btn);
+
+    font = TTF_OpenFont("game_resources/HomeVideoBold-R90Dv.ttf", 32);
+    if (font) {
+        SDL_Color color = {255, 255, 255, 255};
+        SDL_Surface *surface = TTF_RenderText_Solid(font, "Quit", color);
+        if (surface) {
+            SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surface);
+            SDL_Rect dst = {quit_btn.x + (quit_btn.w - surface->w)/2, quit_btn.y + (quit_btn.h - surface->h)/2, surface->w, surface->h};
+            SDL_RenderCopy(rend, texture, NULL, &dst);
+            SDL_DestroyTexture(texture);
+            SDL_FreeSurface(surface);
+        }
+        TTF_CloseFont(font);
+    }
+
+    SDL_RenderPresent(rend);
+
+}
+
+
+int handle_start_menu_mouse_click(int mouse_x, int mouse_y) {
+    SDL_Rect start_btn = {WINDOW_WIDTH/2 - 100, WINDOW_HEIGHT/2 - 20, 200, 60};
+    SDL_Rect quit_btn  = {WINDOW_WIDTH/2 - 100, WINDOW_HEIGHT/2 + 60, 200, 60};
+    if (is_point_in_rect(mouse_x, mouse_y, &start_btn)) return 1; // Start
+    if (is_point_in_rect(mouse_x, mouse_y, &quit_btn))  return 2; // Quit
+    return 0;
+}
+
+
+
+
+int handle_pause_menu_mouse_click(int mouse_x, int mouse_y) {
+    SDL_Rect resume_btn = {WINDOW_WIDTH/2 - 100, WINDOW_HEIGHT/2 - 20, 200, 60};
+    SDL_Rect quit_btn   = {WINDOW_WIDTH/2 - 100, WINDOW_HEIGHT/2 + 60, 200, 60};
+
+    if (is_point_in_rect(mouse_x, mouse_y, &resume_btn)) {
+        return 1; // Resume
+    }
+    if (is_point_in_rect(mouse_x, mouse_y, &quit_btn)) {
+        return 2; // Quit
+    }
+    return 0;
+}
+void render_start_menu(SDL_Renderer *rend) {
+    SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+    SDL_RenderClear(rend);
+
+    // --- Render the colorful title ---
+    const char *title = "SPACE_SHOOTER";
+    SDL_Color colors[] = {
+        {255, 0, 0, 255},    // S - Red
+        {255, 127, 0, 255},  // P - Orange
+        {255, 255, 0, 255},  // A - Yellow
+        {0, 255, 0, 255},    // C - Green
+        {0, 0, 255, 255},    // E - Blue
+        {75, 0, 130, 255},   // _ - Indigo
+        {148, 0, 211, 255},  // S - Violet
+        {255, 20, 147, 255}, // H - Pink
+        {0, 255, 255, 255},  // O - Cyan
+        {255, 215, 0, 255},  // O - Gold
+        {0, 128, 128, 255},  // T - Teal
+        {255, 69, 0, 255},   // E - OrangeRed
+        {128, 0, 128, 255},  // R - Purple
+    };
+    int title_len = strlen(title);
+
+    TTF_Font *font = TTF_OpenFont("game_resources/HomeVideoBold-R90Dv.ttf", 64);
+    if (font) {
+        int total_width = 0;
+        int letter_widths[32] = {0};
+        int letter_heights[32] = {0};
+        SDL_Surface *surfaces[32] = {0};
+
+        // Render each letter of the title with its corresponding color
+        for (int i = 0; i < title_len; i++) {
+            char letter[2] = {title[i], '\0'};
+            surfaces[i] = TTF_RenderText_Solid(font, letter, colors[i % (sizeof(colors)/sizeof(colors[0]))]);
+            if (surfaces[i]) {
+                letter_widths[i] = surfaces[i]->w;
+                letter_heights[i] = surfaces[i]->h;
+                total_width += surfaces[i]->w;
+            }
+        }
+
+        int x = WINDOW_WIDTH/2 - total_width/2;
+        int y = WINDOW_HEIGHT/2 - 180;
+        // Render each letter texture at the correct position
+        for (int i = 0; i < title_len; i++) {
+            if (surfaces[i]) {
+                SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surfaces[i]);
+                SDL_Rect dst = {x, y, letter_widths[i], letter_heights[i]};
+                SDL_RenderCopy(rend, texture, NULL, &dst);
+                x += letter_widths[i];
+                SDL_DestroyTexture(texture);
+                SDL_FreeSurface(surfaces[i]);
+            }
+        }
+        TTF_CloseFont(font);
+    }
+
+    // --- Render Start and Quit buttons (after the title) ---
+    SDL_Rect start_btn = {WINDOW_WIDTH/2 - 100, WINDOW_HEIGHT/2 - 20, 200, 60};
+    SDL_SetRenderDrawColor(rend, 0, 200, 0, 255);
+    SDL_RenderFillRect(rend, &start_btn);
+
+    font = TTF_OpenFont("game_resources/HomeVideoBold-R90Dv.ttf", 32);
+    if (font) {
+        SDL_Color color = {255, 255, 255, 255};
+        SDL_Surface *surface = TTF_RenderText_Solid(font, "Start", color);
+        if (surface) {
+            SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surface);
+            SDL_Rect dst = {start_btn.x + (start_btn.w - surface->w)/2, start_btn.y + (start_btn.h - surface->h)/2, surface->w, surface->h};
+            SDL_RenderCopy(rend, texture, NULL, &dst);
+            SDL_DestroyTexture(texture);
+            SDL_FreeSurface(surface);
+        }
+        TTF_CloseFont(font);
+    }
+
+    SDL_Rect quit_btn = {WINDOW_WIDTH/2 - 100, WINDOW_HEIGHT/2 + 60, 200, 60};
+    SDL_SetRenderDrawColor(rend, 200, 0, 0, 255);
+    SDL_RenderFillRect(rend, &quit_btn);
+
+    font = TTF_OpenFont("game_resources/HomeVideoBold-R90Dv.ttf", 32);
+    if (font) {
+        SDL_Color color = {255, 255, 255, 255};
+        SDL_Surface *surface = TTF_RenderText_Solid(font, "Quit", color);
+        if (surface) {
+            SDL_Texture *texture = SDL_CreateTextureFromSurface(rend, surface);
+            SDL_Rect dst = {quit_btn.x + (quit_btn.w - surface->w)/2, quit_btn.y + (quit_btn.h - surface->h)/2, surface->w, surface->h};
+            SDL_RenderCopy(rend, texture, NULL, &dst);
+            SDL_DestroyTexture(texture);
+            SDL_FreeSurface(surface);
+        }
+        TTF_CloseFont(font);
+    }
+
+    SDL_RenderPresent(rend);
+}
+
