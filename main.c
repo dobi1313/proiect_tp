@@ -15,7 +15,6 @@ int main(void) {
     ship main_ship;
     main_ship.ship_hp = 50;
     main_ship.max_hp = main_ship.ship_hp;
-    printf("ship_hp: %d\n", main_ship.max_hp);
     main_ship.atk_speed = 200;
     main_ship.damage = 3;
     main_ship.armor = 1;

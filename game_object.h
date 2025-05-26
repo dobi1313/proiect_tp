@@ -103,7 +103,7 @@ void spawn_enemy(enemy *enemies, int enemy_hp);
 void update_enemies(enemy *enemies, ship *main_ship);
 void render_enemies(SDL_Renderer *rend, enemy *enemies);
 void check_projectile_enemy_collision(projectile *projectiles, enemy *enemies, unsigned int *score, unsigned int *exp, powerup *powerups, ship *main_ship);
-void handle_enemy_death(enemy *enemies, powerup *powerups, int max_powerups);
+void handle_enemy_death(enemy *enemies, powerup *powerups);
 
 
 void check_enemy_ship_collision(ship *main_ship, enemy *enemies);

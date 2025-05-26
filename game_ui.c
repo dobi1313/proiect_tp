@@ -218,8 +218,6 @@ void check_power_up_collision(ship *main_ship, powerup *powerups, Uint32 current
                 power_up_effect(main_ship, &powerups[i]);
                 powerups[i].is_active = 0;
             }
-            printf("Power-up collected: %d\n", powerups[i].type);
-            printf("Power-up duration: %d ms\n", powerups[i].start_time);
         }
     }
 }

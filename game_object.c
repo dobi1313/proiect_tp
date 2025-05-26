@@ -111,7 +111,7 @@ void fire_projectile(projectile *projectiles, ship *main_ship, int projectile_ty
         }
     }
     if(main_ship->double_projectiles) {
-        printf("Double projectiles active\n");
+        
         for (int i = 0; i < PROJECTILE_MAX; i++) {
         if (!projectiles[i].is_active) {
             switch (projectile_type) {
@@ -311,7 +311,7 @@ void render_enemies(SDL_Renderer *rend, enemy *enemies) {
     SDL_SetRenderDrawColor(rend, r, g, b, a); 
 }
 
-void handle_enemy_death(enemy *enemies, powerup *powerups, int max_powerups) {
+void handle_enemy_death(enemy *enemies, powerup *powerups) {
     enemies->is_active = 0;
     if (rand() % 100 < 50) {
         int powerup_type = rand() % POWERUP_TYPE_COUNT;
@@ -348,7 +348,7 @@ void check_projectile_enemy_collision(projectile *projectiles, enemy *enemies, u
                         enemies[j].is_active = 0;
                         *score += enemies[j].score * main_ship->double_points; 
                         *exp += enemies[j].score; 
-                        handle_enemy_death(&enemies[j], powerups, POWERUP_MAX);
+                        handle_enemy_death(&enemies[j], powerups);
                     }
                     break;
                 }
@@ -462,7 +462,6 @@ void render_boss(SDL_Renderer *rend, boss *boss_enemy) {
 }
 
 void power_up_effect(ship *main_ship, powerup *p) {
-    printf("Powerup %d activated\n", p->type);
     switch (p->type) {
         case Shield:
             main_ship->has_shield = 1;
@@ -520,7 +519,6 @@ void power_up_effect(ship *main_ship, powerup *p) {
 
 void power_end_effect(ship *main_ship, powerup *p) {
     if(!p->is_up) return;
-    printf("Powerup %d ended\n", p->type);
     switch (p->type) {
         case Shield:
             main_ship->has_shield = 0; 

@@ -1,4 +1,3 @@
-
 #CC = gcc
 #CFLAGS = -g -Wall -O3 -pedantic `sdl2-config --cflags` 
 #LDFLAGS = `sdl2-config --libs` -lSDL2_image -lSDL2_ttf -lm
@@ -22,12 +21,11 @@ LDFLAGS = -Llibs -Wl,-rpath,'$$ORIGIN/libs' -lSDL2 -lSDL2_image -lSDL2_ttf -lm -
 
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
-BIN = bin/space_shooter
+BIN = space_shooter
 
 all: $(BIN)
 
 $(BIN): $(OBJ)
-	@mkdir -p bin
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 %.o: %.c
@@ -35,5 +33,5 @@ $(BIN): $(OBJ)
 
 clean:
 	rm -f *.o
-	rm -rf bin
+	rm -f space_shooter
 
